@@ -10,7 +10,9 @@ TOKEN = os.getenv('discord_token')
 intents = discord.Intents.default()
 intents.message_content = True 
 bot = commands.Bot(command_prefix='+', intents=intents)
-ACCESS_ROLE_ID = 1401588306730291230
+ACCESS_ROLE_ID = 1430104430908543099
+BOT_NAME = "Espada"
+BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
 ability_cooldown = {
     'mist':604800,
     'amaterasu':172800,
@@ -29,7 +31,9 @@ ability_cooldown = {
     'angel':86400,
     'clef':86400,
     'judgement':1296000,
-    'ombre':259200
+    'ombre':259200,
+    'safe_zone':172800,
+    'morsure':86400
 }
 # Helper function (place this outside any command)
 def _set_cooldown_logic(member_id, ability_name, cooldown_duration):
@@ -65,474 +69,819 @@ def _set_cooldown_logic(member_id, ability_name, cooldown_duration):
     conn.commit()
     return False, new_expiration_timestamp 
 @bot.command(name='mist')
+# @commands.has_role(ROLE_ID) # Don't forget to add your role check back if you removed it
 async def mist_cd_command(ctx):
+    # --- Branding/Setup ---
     ability_name = "mist"
-    cooldown_duration = ability_cooldown[ability_name]
+    cooldown_duration = ability_cooldown[ability_name] # Assumes ability_cooldown is defined globally
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) # Gold/Yellow theme color
+
+    # --- Cooldown Logic (Uses your external function) ---
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
+    
+    # --- Embed Building ---
+    
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        # Case 1: Already on cooldown (Failure/Info Embed)
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        # Use a contrasting color for errors, or keep yellow for branding consistency
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        # Case 2: Cooldown launched (Success Embed)
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+
+    # Set the author/icon using the correct variable: ctx.author
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    
+    # Final send command (only one is sent now)
+    await ctx.send(embed=embed)
 @bot.command(name='paralyse')
 async def mist_cd_command(ctx):
     ability_name = "paralyse"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ta **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='blood')
 async def mist_cd_command(ctx):
     ability_name = "blood"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='laser')
 async def mist_cd_command(ctx):
     ability_name = "laser"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
+@bot.command(name='safe_zone')
+async def mist_cd_command(ctx):
+    ability_name = "safe_zone"
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
+    is_on_cooldown, timestamp = _set_cooldown_logic(
+        ctx.author.id, 
+        ability_name, 
+        cooldown_duration
+    )
+    if is_on_cooldown:
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
+        )
+        color = discord.Color.red()
+    else:
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
+@bot.command(name='morsure')
+async def mist_cd_command(ctx):
+    ability_name = "morsure"
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
+    is_on_cooldown, timestamp = _set_cooldown_logic(
+        ctx.author.id, 
+        ability_name, 
+        cooldown_duration
+    )
+    if is_on_cooldown:
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
+        )
+        color = discord.Color.red()
+    else:
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='amaterasu')
 async def mist_cd_command(ctx):
     ability_name = "amaterasu"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='phoenix')
 async def mist_cd_command(ctx):
     ability_name = "phoenix"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='phoenix2')
 async def mist_cd_command(ctx):
     ability_name = "phoenix2"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='cursed')
 async def mist_cd_command(ctx):
     ability_name = "cursed"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='poison')
 async def mist_cd_command(ctx):
     ability_name = "poison"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='saturn')
 async def mist_cd_command(ctx):
     ability_name = "saturn"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='ragnarok')
 async def mist_cd_command(ctx):
     ability_name = "ragnarok"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 @bot.command(name='clef')
 async def mist_cd_command(ctx):
     ability_name = "clef"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ta **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
-@bot.command(name='judgment')
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
+@bot.command(name='judgement')
 async def mist_cd_command(ctx):
     ability_name = "judgement"
-    cooldown_duration = ability_cooldown[ability_name]
-
+    cooldown_duration = ability_cooldown[ability_name] 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0) 
     is_on_cooldown, timestamp = _set_cooldown_logic(
         ctx.author.id, 
         ability_name, 
         cooldown_duration
     )
     if is_on_cooldown:
-        await ctx.send(
-            f"❌ **{ctx.author.display_name}**, ton **{ability_name}** est toujours sous cooldown ! "
-            f"Pret: <t:{int(timestamp)}:R>"
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown !"
+            f"\nPrêt : <t:{int(timestamp)}:R>"
         )
+        color = discord.Color.red()
     else:
-        await ctx.send(
-            f"✅ Ton **{ability_name}** est sous cooldown. "
-            f"Pret a nouveau: <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
+        description = (
+            f"✅ **{ability_name.capitalize()}** lancé."
+            f"\nPrêt à nouveau : <t:{int(timestamp)}:R> (<t:{int(timestamp)}:T>)"
         )
-@bot.command(name='volcan')
-# @commands.has_role(ROLE_ID) # Add permission decorator if needed
-async def combo_ability_command(ctx):
-    member = ctx.author
-    ability_name = "volcan" 
-    final_cooldown_duration = ability_cooldown[ability_name]
-    current_time = datetime.now().timestamp()
-
-    # 1. RETRIEVE CURRENT STATUS (Count or Cooldown Time)
-    cursor.execute(
-        "SELECT cooldown_until FROM cooldowns WHERE user_id = ? AND ability = ?", 
-        (member.id, ability_name)
+        color = BOT_COLOR
+    embed = discord.Embed(
+        title=f" Activation d'abilité | {ability_name.capitalize()}",
+        description=description,
+        color=color
     )
-    result = cursor.fetchone()
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    await ctx.send(embed=embed)
+@bot.command(name='volcan') 
+async def combo_cd_command(ctx):
+    ability_name = "volcan"
+    MAX_USES = 2
+    FINAL_CD_DURATION =  86400
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+
+
+    is_on_cooldown, current_value = _set_multi_use_cooldown_logic(
+        ctx.author.id, 
+        ability_name, 
+        MAX_USES,
+        FINAL_CD_DURATION
+    )
     
-    # Check 1: If the entry exists
-    if result is not None:
-        stored_value = result[0] # This could be a timestamp (cooldown) or an integer (count)
+    if is_on_cooldown and current_value > 1000000000: 
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown."
+            f"\nPrêt : <t:{int(current_value)}:R>"
+        )
+        color = discord.Color.red()
+        title = f"Activation d'abilité | {ability_name.capitalize()}"
         
-        # Check 1a: Is it an active COOLDOWN (i.e., the value is a future timestamp)?
-        if stored_value > current_time:
-            # Still on cooldown
-            return await ctx.send(
-                f"❌ **{member.display_name}**, ton **{ability_name}** est sous cooldown. "
-                f"Pret: <t:{int(stored_value)}:R>"
-            )
+    elif is_on_cooldown:
+        uses_remaining = MAX_USES - int(current_value)
+        description = (
+            f"⏳ **{ability_name.capitalize()}** utilisé {int(current_value)} fois."
+            f"\nIl reste **{uses_remaining} use** pour lancer le cooldown ."
+        )
+        color = BOT_COLOR
+        title = "Utilisation Enregistrée"
+        
+    else:
+        # Case 3: Final Cooldown launched (Value is the final timestamp)
+        description = (
+            f"✅ Activation d'abilité | {ability_name.capitalize()} "
+            f"\nPrêt à nouveau : <t:{int(current_value)}:R> (<t:{int(current_value)}:T>)"
+        )
+        color = BOT_COLOR
+        title = f" Activation d'abilité | {ability_name.capitalize()}"
 
-        # Check 1b: Is it a USAGE COUNT (i.e., the value is 1, and the cooldown expired)?
-        elif stored_value == 2:
-            # Second use! Start the final cooldown.
-            
-            # Calculate the final expiration time
-            expiration_dt = datetime.now() + timedelta(seconds=final_cooldown_duration)
-            new_expiration_timestamp = expiration_dt.timestamp()
-
-            # Update database with the new, long cooldown time
-            cursor.execute(
-                """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
-                   VALUES (?, ?, ?)""",
-                (member.id, ability_name, new_expiration_timestamp)
-            )
-            conn.commit()
-            
-            return await ctx.send(
-                f"✅ Ton {ability_name} est sous cooldown ! "
-                f"Pret a nouveau: <t:{int(new_expiration_timestamp)}:R>"
-            )
-
-    # 2. FIRST USE (or Cooldown expired and deleted via +cd)
-    
-    # Set the usage count to 1 (or reset the count if it expired)
-    usage_count = 2
-    cursor.execute(
-        """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
-           VALUES (?, ?, ?)""",
-        (member.id, ability_name, usage_count)
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color
     )
-    conn.commit()
-    
-    await ctx.send(
-        f"⏳ **{ability_name.upper()}** use (1/2)"
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
     )
-@bot.command(name='heal')
-async def combo_ability_command(ctx):
-    member = ctx.author
+    
+    await ctx.send(embed=embed)
+@bot.command(name='heal') 
+async def combo_cd_command(ctx):
     ability_name = "heal"
-    final_cooldown_duration = ability_cooldown[ability_name]
-    current_time = datetime.now().timestamp()
-    cursor.execute(
-        "SELECT cooldown_until FROM cooldowns WHERE user_id = ? AND ability = ?", 
-        (member.id, ability_name)
+    MAX_USES = 2
+    FINAL_CD_DURATION = 86400
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+
+
+    is_on_cooldown, current_value = _set_multi_use_cooldown_logic(
+        ctx.author.id, 
+        ability_name, 
+        MAX_USES,
+        FINAL_CD_DURATION
     )
-    result = cursor.fetchone()
-    if result is not None:
-        stored_value = result[0] 
-        if stored_value > current_time:
-            return await ctx.send(
-                f"❌ **{member.display_name}**, ton **{ability_name}** est sous cooldown. "
-                f"Pret a nouveau: <t:{int(stored_value)}:R>"
-            )
-        elif stored_value == 2:
-            expiration_dt = datetime.now() + timedelta(seconds=final_cooldown_duration)
-            new_expiration_timestamp = expiration_dt.timestamp()
-            cursor.execute(
-                """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
-                   VALUES (?, ?, ?)""",
-                (member.id, ability_name, new_expiration_timestamp)
-            )
-            conn.commit()
-            return await ctx.send(
-                f"✅ Ton {ability_name.upper()} est sous cooldown ! "
-                f"Pret a nouveau: <t:{int(new_expiration_timestamp)}:R>"
-            )
-    usage_count = 2
-    cursor.execute(
-        """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
-           VALUES (?, ?, ?)""",
-        (member.id, ability_name, usage_count)
+    
+    if is_on_cooldown and current_value > 1000000000: 
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown."
+            f"\nPrêt : <t:{int(current_value)}:R>"
+        )
+        color = discord.Color.red()
+        title = f"Activation d'abilité | {ability_name.capitalize()}"
+        
+    elif is_on_cooldown:
+        uses_remaining = MAX_USES - int(current_value)
+        description = (
+            f"⏳ **{ability_name.capitalize()}** utilisé {int(current_value)} fois."
+            f"\nIl reste **{uses_remaining} use** pour lancer le cooldown ."
+        )
+        color = BOT_COLOR
+        title = "Utilisation Enregistrée"
+        
+    else:
+        # Case 3: Final Cooldown launched (Value is the final timestamp)
+        description = (
+            f"✅ Activation d'abilité | {ability_name.capitalize()} "
+            f"\nPrêt à nouveau : <t:{int(current_value)}:R> (<t:{int(current_value)}:T>)"
+        )
+        color = BOT_COLOR
+        title = f" Activation d'abilité | {ability_name.capitalize()}"
+
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color
     )
-    conn.commit()
-    await ctx.send(
-        f"⏳ **{ability_name.upper()}** use (1/2)"
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
     )
-@bot.command(name='arrow')
-async def combo_ability_command(ctx):
-    member = ctx.author
+    await ctx.send(embed=embed)
+@bot.command(name='arrow') 
+async def combo_cd_command(ctx):
     ability_name = "arrow"
-    final_cooldown_duration = ability_cooldown[ability_name]
-    current_time = datetime.now().timestamp()
-    cursor.execute(
-        "SELECT cooldown_until FROM cooldowns WHERE user_id = ? AND ability = ?", 
-        (member.id, ability_name)
+    MAX_USES = 2
+    FINAL_CD_DURATION =  345600
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+
+
+    is_on_cooldown, current_value = _set_multi_use_cooldown_logic(
+        ctx.author.id, 
+        ability_name, 
+        MAX_USES,
+        FINAL_CD_DURATION
     )
-    result = cursor.fetchone()
-    if result is not None:
-        stored_value = result[0] 
-        if stored_value > current_time:
-            return await ctx.send(
-                f"❌ **{member.display_name}**, ton **{ability_name}** est sous cooldown. "
-                f"Pret a nouveau: <t:{int(stored_value)}:R>"
-            )
-        elif stored_value == 2:
-            expiration_dt = datetime.now() + timedelta(seconds=final_cooldown_duration)
-            new_expiration_timestamp = expiration_dt.timestamp()
-            cursor.execute(
-                """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
-                   VALUES (?, ?, ?)""",
-                (member.id, ability_name, new_expiration_timestamp)
-            )
-            conn.commit()
-            return await ctx.send(
-                f"✅ Ton {ability_name} est sous cooldown ! "
-                f"Pret: <t:{int(new_expiration_timestamp)}:R>"
-            )
-    usage_count = 2
-    cursor.execute(
-        """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
-           VALUES (?, ?, ?)""",
-        (member.id, ability_name, usage_count)
+    
+    if is_on_cooldown and current_value > 1000000000: 
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown."
+            f"\nPrêt : <t:{int(current_value)}:R>"
+        )
+        color = discord.Color.red()
+        title = f"Activation d'abilité | {ability_name.capitalize()}"
+        
+    elif is_on_cooldown:
+        uses_remaining = MAX_USES - int(current_value)
+        description = (
+            f"⏳ **{ability_name.capitalize()}** utilisé {int(current_value)} fois."
+            f"\nIl reste **{uses_remaining} use** pour lancer le cooldown ."
+        )
+        color = BOT_COLOR
+        title = "Utilisation Enregistrée"
+        
+    else:
+        # Case 3: Final Cooldown launched (Value is the final timestamp)
+        description = (
+            f"✅ Activation d'abilité | {ability_name.capitalize()} "
+            f"\nPrêt à nouveau : <t:{int(current_value)}:R> (<t:{int(current_value)}:T>)"
+        )
+        color = BOT_COLOR
+        title = f" Activation d'abilité | {ability_name.capitalize()}"
+
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color
     )
-    conn.commit()
-    await ctx.send(
-        f"⏳ **{ability_name.upper()}** use (1/2)"
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
     )
-@bot.command(name='ombre')
-async def quad_ability_command(ctx):
-    member = ctx.author
+    
+    await ctx.send(embed=embed)
+@bot.command(name='ombre') 
+async def combo_cd_command(ctx):
     ability_name = "ombre"
-    MAX_USES = 4 # Total uses required
-    FINAL_CD_DURATION = 180 # 3 minutes after the 4th use
+    MAX_USES = 4
+    FINAL_CD_DURATION =  259200
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+
+
+    is_on_cooldown, current_value = _set_multi_use_cooldown_logic(
+        ctx.author.id, 
+        ability_name, 
+        MAX_USES,
+        FINAL_CD_DURATION
+    )
     
+    if is_on_cooldown and current_value > 1000000000: 
+        description = (
+            f"❌ **{ctx.author.display_name}**, votre **{ability_name}** est toujours sous cooldown."
+            f"\nPrêt : <t:{int(current_value)}:R>"
+        )
+        color = discord.Color.red()
+        title = f"Activation d'abilité | {ability_name.capitalize()}"
+        
+    elif is_on_cooldown:
+        uses_remaining = MAX_USES - int(current_value)
+        description = (
+            f"⏳ **{ability_name.capitalize()}** utilisé {int(current_value)} fois."
+            f"\nIl reste **{uses_remaining} use** pour lancer le cooldown ."
+        )
+        color = BOT_COLOR
+        title = "Utilisation Enregistrée"
+        
+    else:
+        # Case 3: Final Cooldown launched (Value is the final timestamp)
+        description = (
+            f"✅ Activation d'abilité | {ability_name.capitalize()} "
+            f"\nPrêt à nouveau : <t:{int(current_value)}:R> (<t:{int(current_value)}:T>)"
+        )
+        color = BOT_COLOR
+        title = f" Activation d'abilité | {ability_name.capitalize()}"
+
+    embed = discord.Embed(
+        title=title,
+        description=description,
+        color=color
+    )
+    embed.set_author(
+        name=f"{ctx.author.display_name} | ESPADA", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    
+    await ctx.send(embed=embed)
+def _set_multi_use_cooldown_logic(user_id, ability_name, max_uses, final_cd_duration):
     current_time = datetime.now().timestamp()
     
-    # Retrieve current state from the database
     cursor.execute(
         "SELECT cooldown_until FROM cooldowns WHERE user_id = ? AND ability = ?", 
-        (member.id, ability_name)
+        (user_id, ability_name)
     )
     result = cursor.fetchone()
     
-    # stored_value will be the timestamp, a small integer (1-3), or 0 if not found
+    # stored_value will be the timestamp, a small integer (1 to max_uses-1), or 0 if not found
     stored_value = result[0] if result is not None else 0
 
-    # 1. Active Cooldown Check (Value is a future timestamp)
+    # 1. Active Cooldown Check (Timestamp > current_time)
     if stored_value > current_time:
-        return await ctx.send(
-            f"❌ **{member.display_name}**, ton **{ability_name}** est sous cooldown! Pret a nouveau: <t:{int(stored_value)}:R>"
-        )
-    
+        return True, stored_value # True = on cooldown, value is the timestamp
     # 2. Determine Current Count (Reset expired timestamp to 0)
-    if stored_value < MAX_USES:
-        # Value is 0, 1, 2, or 3 (a usage count)
-        current_count = int(stored_value)
-    else:
-        # Value is an expired timestamp (large number), so we reset the count to 0.
-        current_count = 0
+    # If stored_value is a large timestamp (and expired), reset to 0. Otherwise, use the count.
+    current_count = int(stored_value) if stored_value < max_uses else 0
         
     new_count = current_count + 1
 
-    # 3. Handle Final Use (Count hits 4)
-    if new_count == MAX_USES:
-        expiration_dt = datetime.now() + timedelta(seconds=FINAL_CD_DURATION)
+    # 3. Handle Final Use (Count hits MAX_USES)
+    if new_count == max_uses:
+        expiration_dt = datetime.now() + timedelta(seconds=final_cd_duration)
         new_expiration_timestamp = expiration_dt.timestamp()
 
-        # Update database with the new, final cooldown timestamp
         cursor.execute(
             """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
                VALUES (?, ?, ?)""",
-            (member.id, ability_name, new_expiration_timestamp)
+            (user_id, ability_name, new_expiration_timestamp)
         )
         conn.commit()
-        return await ctx.send(
-            f"✅ ton **{ability_name}** est sous cooldown ! Pret: <t:{int(new_expiration_timestamp)}:R>"
-        )
+        # Returns False (not on incremental CD) and the final timestamp
+        return False, new_expiration_timestamp 
 
-    # 4. Handle Incremental Use (Count is 1, 2, or 3)
+    # 4. Handle Incremental Use (Count is 1 to MAX_USES-1)
     else:
-        uses_remaining = MAX_USES - new_count
-        
-        # Update database with the new usage count (small integer)
         cursor.execute(
             """INSERT OR REPLACE INTO cooldowns (user_id, ability, cooldown_until) 
                VALUES (?, ?, ?)""",
-            (member.id, ability_name, new_count)
+            (user_id, ability_name, new_count)
         )
         conn.commit()
-        
-        await ctx.send(
-            f"⏳ **{ability_name}** : use restant {uses_remaining}"
-        )
+        # Returns True (on incremental CD) and the new usage count
+        return True, new_count
+@bot.command(name='resetall')
+async def reset_all_cooldowns_self(ctx):
+    """
+    Resets all ability cooldowns for the user who ran the command (available to all).
+    Usage: +resetall
+    """
+    member_to_reset = ctx.author
+    BOT_NAME = "Espada" 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+    
+    # DELETE ALL entries where the user_id matches the command invoker
+    cursor.execute(
+        "DELETE FROM cooldowns WHERE user_id = ?", 
+        (member_to_reset.id,)
+    )
+    conn.commit()
+
+    # Themed Embed Confirmation
+    embed = discord.Embed(
+        title="✅ Réinitialisation Personnelle Complète",
+        description=f"Toutes vos capacités ont été réinitialisées, **{member_to_reset.display_name}**.",
+        color=BOT_COLOR
+    )
+    embed.set_author(
+        name=f"{member_to_reset.display_name} | {BOT_NAME}", 
+        icon_url=member_to_reset.display_avatar.url
+    )
+    
+    await ctx.send(embed=embed)
+ROLE_ID_1 = 1401636885033521183
+@bot.command(name='resetall_admin')
+@commands.has_role(ROLE_ID_1) # ONLY users with this role can run this command
+async def reset_all_cooldowns_admin(ctx, target_member: discord.Member):
+    """
+    Admin command to reset all ability cooldowns for a specified user.
+    Usage: +resetall @TargetMember
+    """
+    
+    BOT_NAME = "Espada" 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+    
+    # If this command is reached, we know the invoker has the role and provided a member.
+    member_to_reset = target_member
+    
+    # DELETE ALL entries for the target user_id
+    cursor.execute(
+        "DELETE FROM cooldowns WHERE user_id = ?", 
+        (member_to_reset.id,)
+    )
+    conn.commit()
+
+    # Admin reset confirmation
+    embed = discord.Embed(
+        title=" Réinitialisation Ciblée ",
+        description=(
+            f"Les cooldowns de **{member_to_reset.display_name}** ont été réinitialisés."
+            f"\nAction effectuée par : {ctx.author.display_name}."
+        ),
+        color=BOT_COLOR
+    )
+    # Set the author/icon using the correct variable: the admin (ctx.author)
+    embed.set_author(
+        name=f"{ctx.author.display_name} | {BOT_NAME}", 
+        icon_url=ctx.author.display_avatar.url
+    )
+    
+    await ctx.send(embed=embed)
 @bot.event
 async def on_ready():
     global conn, cursor
@@ -625,7 +974,7 @@ async def show_cooldowns(ctx, member: discord.Member = None):
         elif int(expiration_timestamp) == 2 and ability_name.lower() == "volcan":
             uses_left = 3 - int(expiration_timestamp) 
             status = f"**{ability_name.capitalize()}: 🔄 {uses_left} use restant**"
-        if ability_name.lower() == "ombre" and expiration_timestamp >= 1 and expiration_timestamp < MAX_USES_FOR_CHECK:
+        elif ability_name.lower() == "ombre" and expiration_timestamp >= 1 and expiration_timestamp < MAX_USES_FOR_CHECK:
             current_count = int(expiration_timestamp)
             uses_left = MAX_USES_FOR_CHECK - current_count
             status = f"**{ability_name.capitalize()}: 🔄 {uses_left} use restant{''if uses_left == 1 else 's'}**"
@@ -638,32 +987,58 @@ async def show_cooldowns(ctx, member: discord.Member = None):
 
     # 3. Build and Send the Embed
     embed = discord.Embed(
-        title=f"Cooldowns de {member.display_name}",
+        title=f"Cooldowns de {member.display_name}", 
         description="\n".join(output_lines),
-        color=discord.Color.blue()
+        color=BOT_COLOR
     )
+    
+    # FIX: Use the 'member' variable (which is either the mentioned member or ctx.author)
+    # The member.display_avatar.url property correctly retrieves the profile picture URL.
+    embed.set_author(
+        name=f"{member.display_name} | {BOT_NAME}", 
+        icon_url=member.display_avatar.url
+    )
+    
     await ctx.send(embed=embed)
 # Define the channel ID you want to restrict
 @bot.command(name='reset')
 async def reset_cooldown(ctx, ability_name: str):
     member = ctx.author
     ability_name = ability_name.lower()
+    BOT_NAME = "Espada" 
+    BOT_COLOR = discord.Color.from_rgb(255, 204, 0)
+    
     cursor.execute(
         "SELECT ability FROM cooldowns WHERE user_id = ? AND ability = ?", 
         (member.id, ability_name)
     )
     result = cursor.fetchone()
-
     if result is None:
-        return await ctx.send(
-            f"⚠️ {ctx.author.display_name} tu n'as pas de cooldown enregistré pour **{ability_name}**."
+        embed = discord.Embed(
+            title="⚠️ Erreur de Réinitialisation",
+            description=f"Tu n'as pas de cooldown enregistré pour **{ability_name}**.",
+            color=discord.Color.orange() 
         )
+        embed.set_author(
+            name=f"{member.display_name} | {BOT_NAME}", 
+            icon_url=member.display_avatar.url
+        )
+        return await ctx.send(embed=embed)
     cursor.execute(
         "DELETE FROM cooldowns WHERE user_id = ? AND ability = ?", 
         (member.id, ability_name)
     )
     conn.commit()
-    await ctx.send(f"✅ Ton cooldown: **{ability_name}** a été reset.")
+    embed = discord.Embed(
+        title="✅ Cooldown Réinitialisé",
+        description=f"Ton cooldown: **{ability_name.capitalize()}** a été réinitialisé avec succès.",
+        color=BOT_COLOR 
+    )
+    embed.set_author(
+        name=f"{member.display_name} | {BOT_NAME}", 
+        icon_url=member.display_avatar.url
+    )
+    await ctx.send(embed=embed)
 TARGET_CHANNEL_ID = 1429941293353795654
 ROLE_ID = 1401636885033521183
 @bot.command(name='setup_access_role')
